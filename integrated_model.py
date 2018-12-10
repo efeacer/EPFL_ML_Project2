@@ -38,7 +38,10 @@ class IntegratedModel:
         """
         print('Learning the integrated model using SGD ...')
         for i in range(self.num_epochs):
+            np.random.shuffle(self.data.observed_train)
+            self.gamma /= 1.2
             for row, col in self.data.observed_train:
+                print(1) # debug
                 user_vector, user_bias = self.user_features[row], self.user_biases[row] 
                 item_vector, item_bias = self.item_features[col], self.item_biases[col]
                 prediction, neighbor_items = self.predict(row, col)
@@ -54,9 +57,10 @@ class IntegratedModel:
                 for neighbor in neighbor_items:
                     rating = self.data.get_rating_train(row, neighbor)
                     baseline = self.global_bias + self.user_biases[row] + self.item_biases[neighbor]
-                    neighborhood_weight = self.neighbor_weights[row, neighbor]
-                    self.neighbor_weights[row, neighbor] += self.gamma * (error * (rating - 
+                    neighborhood_weight = self.neighbor_weights[col, neighbor]
+                    self.neighbor_weights[col, neighbor] += self.gamma * (error * (rating - 
                         baseline) / neighbor_normalizer - self.lambda_neighbor * neighborhood_weight)
+            print(222222) # debug
             self.train_rmses.append(self.compute_rmse())
             print('Iteration: {}, RMSE on training set: {}'.format(i + 1, self.train_rmses[-1]))
             if self.is_converged():
@@ -84,7 +88,6 @@ class IntegratedModel:
         Returns:
             rmse: The Root Mean Squared Error value
         """
-        print('n') #test purpose
         mse = 0
         observed = self.data.observed_train if is_train else self.data.observed_test
         def get_rating(user, item):
