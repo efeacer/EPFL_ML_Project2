@@ -8,7 +8,7 @@ from data import Data
 
 def main():
     data = Data(test_purpose=True)
-    
+
     models = [] 
 
     baselines = Baselines(data=data, test_purpose=True)
@@ -20,7 +20,7 @@ def main():
     models.append(baselines.baseline_user_mean()['Rating'])
 
     print('\nModelling using baseline_movie_mean:')
-    models.append(baselines.baseline_movie_mean()['Rating'])
+    models.append(baselines.baseline_item_mean()['Rating'])
     
     mf_sgd = MF_SGD(data=data, test_purpose=True)
 

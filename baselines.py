@@ -4,8 +4,7 @@ from loss_functions import compute_rmse
 
 class Baselines:
     """
-    A class that encapsulates the simple user and movie based mean 
-    and median models.
+    A class that encapsulates the simple user and item based mean models.
     """
 
     def __init__(self, data=None, test_purpose=False):
@@ -45,27 +44,29 @@ class Baselines:
         """
         predictions = pd.DataFrame.copy(self.data.test_df)
         def predict_group(group):
-            group['Rating'] = self.data.user_means[group['User']]
+            for i, row in group.iterrows():
+                group.at[i,'Rating'] = self.data.user_means[row['User'] - 1]
             return group
         predictions = predictions.groupby('User').apply(predict_group)
         if self.test_purpose: 
             self.evalueate_model(predictions['Rating'], 'baseline_user_mean')
         return predictions
 
-    def baseline_movie_mean(self):
+    def baseline_item_mean(self):
         """
-        Makes predictions based on the movie mean of the observed
+        Makes predictions based on the item mean of the observed
         ratings in the training set. 
         Returns:
             predictions: The predictions of the model on the test data
         """
         predictions = pd.DataFrame.copy(self.data.test_df)
         def predict_group(group):
-            group['Rating'] = self.data.item_means[group['Item']]
+            for i, row in group.iterrows():
+                group.at[i,'Rating'] = self.data.item_means[row['Item'] - 1]
             return group
         predictions = predictions.groupby('Item').apply(predict_group)
         if self.test_purpose: 
-            self.evalueate_model(predictions['Rating'], 'baseline_movie_mean')
+            self.evalueate_model(predictions['Rating'], 'baseline_item_mean')
         return predictions
 
     def evalueate_model(self, model_ratings, model_name):
@@ -78,3 +79,11 @@ class Baselines:
         """
         rmse = compute_rmse(self.data.test_df['Rating'], model_ratings)
         print('Test RMSE using {}: {}'.format(model_name, rmse))
+
+if __name__ == '__main__':
+    model = Baselines(test_purpose=True)
+    # Testing
+    model.baseline_global_mean()
+    model.baseline_user_mean()
+    model.baseline_item_mean()
+    

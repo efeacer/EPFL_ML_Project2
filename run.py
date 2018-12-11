@@ -8,11 +8,11 @@ from data import Data
 from data_processing import create_submission
 
 PREDICTIONS_FILENAME = 'Datasets/mixed_model.csv'
-"""
+
 OPTIMAL_WEIGHTS = [0.05448098, -0.12085548, 0.00152701, 0.05366179, 0.01066892, 
     -0.01574904, -0.09340066, 0.04176627, 0.07477889, 0.8849526,
     0.05250151, 0.06863501, -0.01624362] # RMSE = 1.0438135875533157 from last run_blending
-"""
+
 def main():
     data = Data(test_purpose=True)
 
@@ -27,7 +27,7 @@ def main():
     models.append(baselines.baseline_user_mean()['Rating'])
 
     print('\nModelling using baseline_movie_mean:')
-    models.append(baselines.baseline_movie_mean()['Rating'])
+    models.append(baselines.baseline_item_mean()['Rating'])
     
     mf_sgd = MF_SGD(data=data, test_purpose=True)
 
