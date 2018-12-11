@@ -22,15 +22,15 @@ class Blending:
             self.__weights = weights
         else:
             self.__weights = {'baseline_global_mean': None,
-                'baseline_user_mean': None,
-                'baseline_item_mean': None,
-                'mf_sgd': None,
-                'mf_bsgd': None, 
-                'mf_als': None,
-                'surprise_kNN_baseline_user': None,
-                'surprise_kNN_baseline_item': None,
-                'surprise_slope_one': None,
-                'surprise_co_clustering': None}
+                              'baseline_user_mean': None,
+                              'baseline_item_mean': None,
+                              'mf_sgd': None,
+                              'mf_bsgd': None, 
+                              'mf_als': None,
+                              'surprise_kNN_baseline_user': None,
+                              'surprise_kNN_baseline_item': None,
+                              'surprise_slope_one': None,
+                              'surprise_co_clustering': None}
             for key in self.__weights:
                 self.__weights[key] = 1.0 / len(models)
         self.__test_ratings = test_ratings
@@ -42,7 +42,7 @@ class Blending:
             optimal_weights: The optimal weight vector
         """
         result = minimize(fun=self.__objective_function, x0=self.__weights.values(),
-            method='SLSQP')
+                          method='SLSQP')
         print(result)
         for i, key in enumerate(self.__weights):
             self.__weights[key] = result.x[i]

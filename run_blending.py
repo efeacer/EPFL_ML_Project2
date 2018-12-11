@@ -52,11 +52,11 @@ def main():
     surprise_models = SurpriseModels(data=data, test_purpose=True)
     
     print('\nModelling using user based Surprise kNN Baseline:')
-    models['surprise_kNN_baseline_user'] = surprise_models.kNN_baseline(k=50, 
+    models['surprise_kNN_baseline_user'] = surprise_models.kNN_baseline(k=150, 
         sim_options={'name': 'cosine', 'user_based': True})['Rating']
 
     print('\nModelling using item based Surprise kNN Baseline:')
-    models['surprise_kNN_baseline_item'] = surprise_models.kNN_baseline(k=100, 
+    models['surprise_kNN_baseline_item'] = surprise_models.kNN_baseline(k=150, 
         sim_options={'name': 'pearson_baseline', 'user_based': False})['Rating']
 
     print('\nModelling using Surprise SlopeOne:')

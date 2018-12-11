@@ -10,9 +10,16 @@ from data_processing import create_submission
 
 PREDICTIONS_FILENAME = 'Datasets/mixed_model.csv'
 
-OPTIMAL_WEIGHTS = [0.05448098, -0.12085548, 0.00152701, 0.05366179, 0.01066892, 
-    -0.01574904, -0.09340066, 0.04176627, 0.07477889, 0.8849526,
-    0.05250151, 0.06863501, -0.01624362] # RMSE = 1.0438135875533157 from last run_blending
+OPTIMAL_WEIGHTS = {'baseline_global_mean': 0.28820931,
+    'baseline_user_mean': -0.31216191,
+    'baseline_item_mean': -0.16738859,
+    'mf_sgd': -0.37163926,
+    'mf_bsgd': 0.53760117, 
+    'mf_als': 0.69963825,
+    'surprise_kNN_baseline_user': 0.0310014,
+    'surprise_kNN_baseline_item': 0.40249769,
+    'surprise_slope_one': -0.14927565,
+    'surprise_co_clustering': 0.04481663}
 
 def main():
     np.random.seed(98) # to be able to reproduce the results
@@ -31,57 +38,70 @@ def main():
         'surprise_co_clustering': None}
 
     baselines = Baselines(data=data)
-    
-    print('\nModelling using baseline_global_mean:')
-    models['baseline_global_mean'] = baselines.baseline_global_mean()['Rating']
-    
-    print('\nModelling using baseline_user_mean:')
-    models['baseline_user_mean'] = baselines.baseline_user_mean()['Rating']
 
-    print('\nModelling using baseline_movie_mean:')
+    print('\nModelling using baseline_global_mean ...')
+    models['baseline_global_mean'] = baselines.baseline_global_mean()['Rating']
+    print('... done')
+
+    print('\nModelling using baseline_user_mean ...')
+    models['baseline_user_mean'] = baselines.baseline_user_mean()['Rating']
+    print('... done')
+
+    print('\nModelling using baseline_movie_mean ...')
     models['baseline_item_mean'] = baselines.baseline_item_mean()['Rating']
+    print('... done')
     
     mf_sgd = MF_SGD(data=data)
 
-    print('\nModelling using MF_SGD:')
+    print('\nModelling using MF_SGD ...')
     models['mf_sgd'] = mf_sgd.train()['Rating']
+    print('... done')
 
     mf_bsgd = MF_BSGD(data=data)
 
-    print('\nModelling using MF_BSGD:')
+    print('\nModelling using MF_BSGD ...')
     models['mf_bsgd'] = mf_bsgd.train()['Rating']
+    print('... done')
     
     mf_als = MF_ALS(data=data)
 
-    print('\nModelling using MF_ALS:')
+    print('\nModelling using MF_ALS ...')
     models['mf_als'] = mf_als.train()['Rating']
+    print('... done')
     
     surprise_models = SurpriseModels(data=data)
     
-    print('\nModelling using user based Surprise kNN Baseline:')
-    models['surprise_kNN_baseline_user'] = surprise_models.kNN_baseline(k=50, 
+    print('\nModelling using user based Surprise kNN Baseline ...')
+    models['surprise_kNN_baseline_user'] = surprise_models.kNN_baseline(k=150, 
         sim_options={'name': 'cosine', 'user_based': True})['Rating']
+    print('... done')
 
-    print('\nModelling using item based Surprise kNN Baseline:')
-    models['surprise_kNN_baseline_item'] = surprise_models.kNN_baseline(k=100, 
+    print('\nModelling using item based Surprise kNN Baseline ...')
+    models['surprise_kNN_baseline_item'] = surprise_models.kNN_baseline(k=150, 
         sim_options={'name': 'pearson_baseline', 'user_based': False})['Rating']
+    print('... done')
 
-    print('\nModelling using Surprise SlopeOne:')
+    print('\nModelling using Surprise SlopeOne ...')
     models['surprise_slope_one'] = surprise_models.slope_one()['Rating']
-    
-    #print('\nModelling using Surprise SVD:')
-    #models.append(surprise_models.SVD()['Rating'])
-    
-    #print('\nModelling using Surprise SVD++:')
-    #models.append(surprise_models.SVDpp()['Rating'])
-    
-    print('\nModelling using Surprise Co-Clustering:')
+    print('... done')
+
+    #print('\nModelling using Surprise SVD ...')
+    #models['surprise_SVD'] = surprise_models.SVD()['Rating']
+    #print('... done')
+
+    #print('\nModelling using Surprise SVD++ ...')
+    #models['surprise_SVDpp'] = surprise_models.SVDpp()['Rating']
+    #print('... done')
+
+    print('\nModelling using Surprise Co-Clustering ...')
     models['surprise_co_clustering'] = surprise_models.co_clustering()['Rating']
-    
+    print('... done')
+
     blending = Blending(models, data.test_df['Rating'], OPTIMAL_WEIGHTS)
 
-    print('\nModelling using weighted averaging of the previous models.')
+    print('\nModelling using weighted averaging of the previous models ...')
     mixed_model = blending.get_weighted_average()
+    print('... done')
 
     data.test_df['Rating'] = mixed_model
     print('\nCreating mixed_model.csv ...')

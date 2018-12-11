@@ -122,8 +122,8 @@ class MF_ALS:
         """
         predictions_df = self.data.test_df.copy()
         for i, row in predictions_df.iterrows():
-            user = row['User'] - 1
-            item = row['Item'] - 1
+            user = int(row['User'] - 1)
+            item = int(row['Item'] - 1)
             predictions_df.at[i, 'Rating'] = self.predict(user, item)
         return predictions_df
 

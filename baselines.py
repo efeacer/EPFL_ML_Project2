@@ -86,4 +86,3 @@ if __name__ == '__main__':
     model.baseline_global_mean()
     model.baseline_user_mean()
     model.baseline_item_mean()
-    
