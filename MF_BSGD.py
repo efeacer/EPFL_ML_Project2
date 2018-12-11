@@ -1,5 +1,7 @@
 import numpy as np
-from data_reader import DataReader
+import scipy.sparse as sp
+from data import Data
+from data_processing import sp_to_df
 
 class MF_BSGD:
     """
@@ -7,22 +9,22 @@ class MF_BSGD:
     using Biased Stochastic Gradient Descent (BSGD)
     """
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, test_purpose=False):
         """
         Initializes inner data structures and hyperparameters.
+        Args:
+            test_purpose: True for testing, False for creating submission
         """
         if data is not None:
             self.data = data
         else:
-            print('Preparing data ...')
-            self.data = DataReader()
-            print('... data prepared.')
+            self.data = Data(test_purpose=test_purpose)
+        self.test_purpose = test_purpose
         self.num_features = 20
         self.init_matrices()
         self.init_biases()
         self.train_rmses = [0, 0]
         self.init_hyperparams()
-        self.test_purpose = False
 
     def train(self): # BSGD
         """
@@ -30,7 +32,8 @@ class MF_BSGD:
         Descent (BSGD) to learn two feature matrices that factorizes the given 
         training data.
         Returns:
-            predictions: The predictions of the model on the test data
+            predictions_df: The predictions of the model on the test data as a Pandas 
+                Data Frame.
         """
         print('Learning the matrix factorization using BSGD ...')
         for i in range(self.num_epochs):
@@ -39,7 +42,7 @@ class MF_BSGD:
             for row, col in self.data.observed_train:
                 user_vector, user_bias = self.user_features[row], self.user_biases[row] 
                 item_vector, item_bias = self.item_features[col], self.item_biases[col]
-                error = self.data.get_rating_train(row, col) - self.predict(row, col)
+                error = self.data.get_rating(row, col) - self.predict(row, col)
                 # Updates using gradients
                 self.user_biases[row] += self.gamma * (error - self.lambda_u_bias * user_bias)
                 self.item_biases[col] += self.gamma * (error- self.lambda_i_bias * item_bias)
@@ -54,6 +57,8 @@ class MF_BSGD:
         print('... Final RMSE on training set: {}'.format(self.train_rmses[-1]))
         if self.test_purpose: 
             print('Test RMSE: {}'.format(self.compute_rmse(is_train=False)))
+        predictions_df = self.get_predictions()
+        return predictions_df
 
     def is_converged(self):
         """
@@ -78,13 +83,30 @@ class MF_BSGD:
         observed = self.data.observed_train if is_train else self.data.observed_test
         def get_rating(user, item):
             if is_train:
-                return self.data.get_rating_train(user, item)
-            return self.data.get_rating_test(user, item)
+                return self.data.get_rating(user, item)
+            return self.data.get_rating(user, item, from_train=False)
         for user, item in observed:
             error = get_rating(user, item) - self.predict(user, item)
             mse += (error ** 2) 
         mse /= len(observed)
         return np.sqrt(mse) # rmse
+
+    def get_predictions(self):
+        """
+        Computes and returns the predictions based on the two feature matrices resulted 
+        from the matrix factorization process and the baselines.
+        Returns:
+            predictions: The predictions of the model on the test data as a Pandas
+                Data Frame.
+        """
+        predictions = self.user_features.dot(self.item_features.T)
+        predictions_sp = sp.lil_matrix.copy(self.data.test_sp)
+        for row, col in self.data.observed_test:
+            prediction = predictions[row, col]
+            prediction += self.global_bias + self.user_biases[row] + self.item_biases[col] 
+            predictions_sp[row, col] = prediction
+        predictions_df = sp_to_df(predictions_sp)
+        return predictions_df
 
     def predict(self, user, item):
         """
@@ -119,14 +141,14 @@ class MF_BSGD:
         """
         Initializes the hyperparameters used in BSGD.
         """
-        self.gamma = 0.01
-        self.lambda_user = 0.007
-        self.lambda_item = 0.001 
+        self.gamma = 0.025
+        self.lambda_user = 0.1
+        self.lambda_item = 0.1
+        self.num_epochs = 20
         self.lambda_u_bias = 0.001
         self.lambda_i_bias = 0.001
-        self.num_epochs = 20
         self.threshold = 1e-4
     
 if __name__ == '__main__':
-    model = MF_BSGD()
+    model = MF_BSGD(test_purpose=True)
     model.train()

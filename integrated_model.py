@@ -1,5 +1,5 @@
 import numpy as np
-from data_reader import DataReader
+from data import Data
 from statistics import mean
 from collections import defaultdict
 from heapq import nlargest
@@ -10,24 +10,24 @@ class IntegratedModel:
     using Yehuda Koren's integrated model.
     """
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, test_purpose=False):
         """
         Initializes inner data structures and hyperparameters.
+        Args:
+            test_purpose: True for testing, False for creating submission
         """
         if data is not None:
             self.data = data
         else:
-            print('Preparing data ...')
-            self.data = DataReader()
-            print('... data prepared.')
+            self.data = Data(test_purpose=test_purpose)
+        self.test_purpose = test_purpose
         self.num_features = 20
-        self.num_neighbors = 50
+        self.num_neighbors = 5
         self.init_matrices()
         self.init_biases()
         self.neighborhood = defaultdict(dict)
         self.train_rmses = [0, 0]
         self.init_hyperparams()
-        self.test_purpose = False
 
     def train(self): # SGD
         """
@@ -41,11 +41,10 @@ class IntegratedModel:
             np.random.shuffle(self.data.observed_train)
             self.gamma /= 1.2
             for row, col in self.data.observed_train:
-                print(1) # debug
                 user_vector, user_bias = self.user_features[row], self.user_biases[row] 
                 item_vector, item_bias = self.item_features[col], self.item_biases[col]
                 prediction, neighbor_items = self.predict(row, col)
-                error = self.data.get_rating_train(row, col) - prediction
+                error = self.data.get_rating(row, col) - prediction
                 # Updates using gradients
                 self.user_biases[row] += self.gamma * (error - self.lambda_u_bias * user_bias)
                 self.item_biases[col] += self.gamma * (error- self.lambda_i_bias * item_bias)
@@ -55,12 +54,11 @@ class IntegratedModel:
                     self.lambda_item * item_vector)
                 neighbor_normalizer = np.sqrt(len(neighbor_items))
                 for neighbor in neighbor_items:
-                    rating = self.data.get_rating_train(row, neighbor)
+                    rating = self.data.get_rating(row, neighbor)
                     baseline = self.global_bias + self.user_biases[row] + self.item_biases[neighbor]
                     neighborhood_weight = self.neighbor_weights[col, neighbor]
                     self.neighbor_weights[col, neighbor] += self.gamma * (error * (rating - 
                         baseline) / neighbor_normalizer - self.lambda_neighbor * neighborhood_weight)
-            print(222222) # debug
             self.train_rmses.append(self.compute_rmse())
             print('Iteration: {}, RMSE on training set: {}'.format(i + 1, self.train_rmses[-1]))
             if self.is_converged():
@@ -92,8 +90,8 @@ class IntegratedModel:
         observed = self.data.observed_train if is_train else self.data.observed_test
         def get_rating(user, item):
             if is_train:
-                return self.data.get_rating_train(user, item)
-            return self.data.get_rating_test(user, item)
+                return self.data.get_rating(user, item)
+            return self.data.get_rating(user, item, from_train=False)
         for user, item in observed:
             error = get_rating(user, item) - self.predict(user, item)
             mse += (error ** 2) 
@@ -134,7 +132,7 @@ class IntegratedModel:
         neighbor_items = self.get_neighbor_items(user, item)
         neighbor_normalizer = np.sqrt(len(neighbor_items))
         for neighbor in neighbor_items:
-            rating = self.data.get_rating_train(user, neighbor)
+            rating = self.data.get_rating(user, neighbor)
             baseline = self.global_bias + self.user_biases[user] + self.item_biases[neighbor]
             neighborhood_effect += self.neighbor_weights[item, neighbor] * (
                 rating - baseline)
