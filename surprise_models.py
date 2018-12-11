@@ -32,9 +32,9 @@ class SurpriseModels:
         else:
             self.data = Data(test_purpose=test_purpose)
         self.test_purpose = test_purpose
-        self.train_data = Dataset.load_from_df(self.data.train_df[['User', 'Movie', 'Rating']], 
+        self.train_data = Dataset.load_from_df(self.data.train_df[['User', 'Item', 'Rating']], 
             rating_scale=(1, 5)).build_full_trainset()
-        self.test_data = [(x['User'], x['Movie'], x['Rating']) 
+        self.test_data = [(x['User'], x['Item'], x['Rating']) 
             for _, x in self.data.test_df.iterrows()]
  
     def kNN_baseline(self, k, sim_options):
@@ -120,7 +120,7 @@ class SurpriseModels:
         account a baseline rating. 
         Args:
             n_cltr_u: Number of user clusters
-            n_cltr_i: Number of movie clusters
+            n_cltr_i: Number of item clusters
             n_epochs: Number of iteration of the optimization loop
         Returns:
             predictions_df: The predictions of the model on the test data in

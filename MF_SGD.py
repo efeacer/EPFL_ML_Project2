@@ -95,11 +95,11 @@ class MF_SGD:
             predictions: The predictions of the model on the test data as a Pandas
                 Data Frame.
         """
-        predictions = self.user_features.dot(self.item_features.T)
-        predictions_sp = sp.lil_matrix.copy(self.data.test_sp)
-        for row, col in self.data.observed_test:
-            predictions_sp[row, col] = predictions[row, col]
-        predictions_df = sp_to_df(predictions_sp)
+        predictions_df = self.data.test_df.copy()
+        for i, row in predictions_df.iterrows():
+            user = row['User'] - 1
+            item = row['Item'] - 1
+            predictions_df.at[i, 'Rating'] = self.predict(user, item)
         return predictions_df
 
     def predict(self, user, item):

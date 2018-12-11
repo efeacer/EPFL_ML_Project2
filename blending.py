@@ -21,7 +21,18 @@ class Blending:
         if weights is not None:
             self.__weights = weights
         else:
-            self.__weights = [1.0 / len(models) for x in models]
+            self.__weights = {'baseline_global_mean': None,
+                'baseline_user_mean': None,
+                'baseline_item_mean': None,
+                'mf_sgd': None,
+                'mf_bsgd': None, 
+                'mf_als': None,
+                'surprise_kNN_baseline_user': None,
+                'surprise_kNN_baseline_item': None,
+                'surprise_slope_one': None,
+                'surprise_co_clustering': None}
+            for key in self.__weights:
+                self.__weights[key] = 1.0 / len(models)
         self.__test_ratings = test_ratings
 
     def optimize_weighted_average(self):
@@ -30,9 +41,11 @@ class Blending:
         Returns:
             optimal_weights: The optimal weight vector
         """
-        result = minimize(fun=self.__objective_function, x0=self.__weights, method='SLSQP')
+        result = minimize(fun=self.__objective_function, x0=self.__weights.values(),
+            method='SLSQP')
         print(result)
-        self.__weights = result.x
+        for i, key in enumerate(self.__weights):
+            self.__weights[key] = result.x[i]
         return self.__weights
 
     def get_weighted_average(self):
@@ -42,8 +55,8 @@ class Blending:
             mixed_models: The weighted combination of prediction results of each model.
         """
         mixed_models = 0
-        for i, model in enumerate(self.__models):
-            mixed_models += self.__weights[i] * model
+        for key, value in self.__models.items():
+            mixed_models += self.__weights[key] * value
         return mixed_models
 
     def __objective_function(self, weights):
@@ -54,7 +67,7 @@ class Blending:
             weights: A list containing the individual weights of each model
         """
         mixed_models = 0
-        for i, model in enumerate(self.__models):
-            mixed_models += weights[i] * model
+        for key, value in self.__models.items():
+            mixed_models += self.__weights[key] * value
         rmse = compute_rmse(self.__test_ratings, mixed_models)
         return rmse

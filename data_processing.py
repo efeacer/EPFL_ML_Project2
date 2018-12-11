@@ -65,7 +65,7 @@ def load_csv_dict(dataset_path):
         col = col[1:] #discard the beginning letter, 'c'
         return int(row), int(col), float(rating)
     data_lines = [process_line(line) for line in lines] # process each line
-    dict_user_key = dict_item_key = defaultdict(dict)
+    dict_user_key, dict_item_key = defaultdict(dict), defaultdict(dict)
     for row, col, rating in data_lines:
         dict_user_key[row - 1][col - 1] = rating
         dict_item_key[col - 1][row - 1] = rating
@@ -104,7 +104,7 @@ def df_to_dict(df):
         dict_user_key: User keyed dictionary for the dataset
         dict_item_key: Item keyed dictionary for the dataset
     """
-    dict_user_key = dict_item_key = defaultdict(dict)
+    dict_user_key, dict_item_key = defaultdict(dict), defaultdict(dict)
     for _, row in df.iterrows():
         user, item, rating = row['User'], row['Item'], row['Rating']
         dict_user_key[user - 1][item - 1] = rating
