@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from data import Data
 import numpy as np
+import matplotlib.pylab as plt
 
 class MF(ABC):
     """
@@ -99,6 +100,19 @@ class MF(ABC):
         item feature matrices in any particular way. A random initialization 
         is provided here.
         """
-        num_users, num_items = self.data.num_users(), self.data.num_items()
-        self.user_features = np.random.rand(num_users, self.num_features)
-        self.item_features = np.random.rand(num_items, self.num_features)
+        self.user_features = np.random.rand(self.data.num_users, self.num_features)
+        self.item_features = np.random.rand(self.data.num_items, self.num_features)
+
+    def plot(self):
+        '''
+        Plots the training Root Mean Squared Errors (rmses) as a function 
+        of the training epoch (iteration).
+        '''
+        rmses = self.train_rmses[2:]
+        nums = range(len(rmses))
+        plt.plot(nums, rmses, label='RMSE')
+        plt.xlabel('Epoch')
+        plt.ylabel('RMSE')
+        plt.title(self.__class__.__name__)
+        plt.legend()
+        plt.show()

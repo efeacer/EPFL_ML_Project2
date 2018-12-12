@@ -43,10 +43,9 @@ class MF_ALS(MF):
         """
         Updates the user feature matrix by solving the normal equations of ALS.
         """
-        num_users = self.data.num_users()
         num_nonzero_rows = self.data.train_sp.getnnz(axis=1)
         lambda_I = self.lambda_user * sp.eye(self.num_features)
-        updated_user_features = np.zeros((num_users, self.num_features))
+        updated_user_features = np.zeros((self.data.num_users, self.num_features))
         for user, items in self.data.observed_by_row_train: # optimize one group
             Z = self.item_features[items]
             Z_T_Z_regularized = Z.T.dot(Z) + num_nonzero_rows[user] * lambda_I
@@ -60,10 +59,9 @@ class MF_ALS(MF):
         """
         Updates the item feature matrix by solving the normal equations of ALS.
         """
-        num_items = self.data.num_items()
         num_nonzero_columns = self.data.train_sp.getnnz(axis=0)
         lambda_I = self.lambda_item * sp.eye(self.num_features)
-        updated_item_features = np.zeros((num_items, self.num_features))
+        updated_item_features = np.zeros((self.data.num_items, self.num_features))
         for item, users in self.data.observed_by_col_train:
             Z = self.user_features[users]
             Z_T_Z_regularized = Z.T.dot(Z) + num_nonzero_columns[item] * lambda_I
@@ -96,3 +94,4 @@ class MF_ALS(MF):
 if __name__ == '__main__':
     model = MF_ALS(test_purpose=True)
     model.train()
+    model.plot()

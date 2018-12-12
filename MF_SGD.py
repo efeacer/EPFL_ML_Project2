@@ -72,3 +72,4 @@ class MF_SGD(MF):
 if __name__ == '__main__':
     model = MF_SGD(test_purpose=True)
     model.train()
+    model.plot()

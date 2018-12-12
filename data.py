@@ -48,6 +48,7 @@ class Data():
             self.train_user_key, self.train_item_key = dp.load_csv_dict(data_train_path)
             self.test_user_key, self.test_item_key = dp.load_csv_dict(data_test_path)
         self.init_statistics()
+        self.num_users, self.num_items = self.train_sp.shape
         self.observed_train = self.get_observed_entries(self.train_sp)
         self.observed_test = self.get_observed_entries(self.test_sp)
         _, self.observed_by_row_train, self.observed_by_col_train = self.build_index_groups(self.train_sp)
@@ -200,28 +201,6 @@ class Data():
             True if the rating exists in the data, False otherwise
         """
         return user in self.train_user_key and item in self.train_user_key[user]
-
-    def num_users(self, in_train=True):
-        """ 
-        Returns the number of users in the training/test set.
-        Args:
-            in_train: True to get number of users from the training set, 
-                False to get the number of users from test set
-        Returns:
-            Number of users in the training/test set
-        """
-        return self.train_sp.shape[0]
-
-    def num_items(self, in_train=True):
-        """ 
-        Returns the number of items in the training/test set.
-        Args:
-            in_train: True to get number of items from the training set, 
-                False to get the number of items from test set
-        Returns:
-            Number of items in the training/test set
-        """
-        return self.train_sp.shape[1]
 
     def get_items_rated_by(self, user, from_train=True):
         """

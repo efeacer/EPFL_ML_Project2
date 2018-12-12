@@ -14,15 +14,14 @@ class MF_BSGD(MF):
             test_purpose: True for testing, False for creating submission
         """
         super().__init__(data=data, test_purpose=test_purpose)
+        self.init_hyperparams()
         self.init_biases()
-        self.init_hyperparams()
-        self.init_hyperparams()
 
     def train(self): # BSGD
         """
         Optimizes Mean Squared Error loss function using Biased Stochastic Gradient
         Descent (BSGD) to learn two feature matrices that factorizes the given 
-        training data.
+        training data together with biases.
         Returns:
             predictions_df: The predictions of the model on the test data as a Pandas 
                 Data Frame.
@@ -54,7 +53,7 @@ class MF_BSGD(MF):
 
     def predict(self, user, item):
         """
-        Predicts a rating for the specified user, item pair. Include the baseline
+        Predicts a rating for the specified user, item pair. Includes the baseline
         effect.
         Args:
             user: The specified user
@@ -69,10 +68,9 @@ class MF_BSGD(MF):
         """
         Initializes global, user and movie biases.
         """
-        num_users, num_items = self.data.num_users(), self.data.num_items()
         self.global_bias = self.data.global_mean
-        self.user_biases = np.zeros(num_users, dtype=float)
-        self.item_biases = np.zeros(num_items, dtype=float)
+        self.user_biases = np.zeros(self.data.num_users, dtype=float)
+        self.item_biases = np.zeros(self.data.num_items, dtype=float)
 
     def init_hyperparams(self):
         """
@@ -89,3 +87,4 @@ class MF_BSGD(MF):
 if __name__ == '__main__':
     model = MF_BSGD(test_purpose=True)
     model.train()
+    model.plot()
