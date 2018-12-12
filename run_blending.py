@@ -19,7 +19,9 @@ def main():
         'mf_bsgd': None, 
         'mf_als': None,
         'surprise_kNN_baseline_user': None,
-        'surprise_kNN_baseline_item': None,
+        'surprise_kNN_baseline_item': None,      
+#        'surprise_SVD': None,
+#        'surprise_SVDpp': None,
         'surprise_slope_one': None,
         'surprise_co_clustering': None}
 

@@ -84,7 +84,7 @@ class SurpriseModels:
                 Pandas Data Frame format
         """
         algorithm = SVD(n_factors=n_factors, n_epochs=n_epochs, lr_all=lr_all, 
-            reg_all=reg_all)
+                        reg_all=reg_all)
         predictions = algorithm.fit(self.train_data).test(self.test_data)
         predictions_df = self.data.test_df.copy()
         predictions_df['Rating'] = [x.est for x in predictions]
@@ -106,7 +106,7 @@ class SurpriseModels:
                 Pandas Data Frame format
         """
         algorithm = SVDpp(n_factors=n_factors, n_epochs=n_epochs, lr_all=lr_all, 
-            reg_all=reg_all)
+                          reg_all=reg_all)
         predictions = algorithm.fit(self.train_data).test(self.test_data)
         predictions_df = self.data.test_df.copy()
         predictions_df['Rating'] = [x.est for x in predictions]

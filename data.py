@@ -110,10 +110,10 @@ class Data():
         observed_entries = list(zip(nonzero_rows, nonzero_columns))
         groups_by_rows = self.group_by(observed_entries, index=0)
         observed_entries_by_row = [(group_name, np.array([x[1] for x in value])) 
-            for group_name, value in groups_by_rows]
+                                   for group_name, value in groups_by_rows]
         groups_by_columns= self.group_by(observed_entries, index=1)
         observed_entries_by_column = [(group_name, np.array([x[0] for x in value])) 
-            for group_name, value in groups_by_columns]
+                                      for group_name, value in groups_by_columns]
         return observed_entries, observed_entries_by_row, observed_entries_by_column
 
     def get_user(self, user, from_train=True):
@@ -235,8 +235,8 @@ class Data():
         """
         return self.train_user_key[user].keys()
 
+# Testing 
 if __name__ == '__main__':
     data = Data()
-    # testing 
     #print(test_reader.train_matrix)
     #print(data.observed_by_col_train)
