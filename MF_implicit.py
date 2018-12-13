@@ -30,7 +30,7 @@ class MF_implicit(MF):
         print('Learning the implicit matrix factorization using SGD ...')
         for i in range(self.num_epochs):
             np.random.shuffle(self.data.observed_train)
-            #self.gamma /= 1.2
+            self.gamma /= 1.2
             for row, col in self.data.observed_train:
                 user_vector, user_bias = self.user_features[row], self.user_biases[row] 
                 item_vector, item_bias = self.item_features[col], self.item_biases[col]
@@ -114,7 +114,7 @@ class MF_implicit(MF):
                 computation.
         """
         implicit_effect, normalizer = self.compute_implicit_effect(user)
-        prediction = self.user_features[user].dot(self.item_features[item] + implicit_effect)
+        prediction = self.item_features[item].dot(self.user_features[user] + implicit_effect)
         prediction += self.global_bias + self.user_biases[user] + self.item_biases[item] 
         return prediction, implicit_effect, normalizer
 
@@ -143,7 +143,7 @@ class MF_implicit(MF):
         """
         Initializes the item implicit feedback matrix.
         """
-        self.implicit_feedbacks = np.random.rand(self.data.num_items, self.num_features) 
+        self.implicit_feedbacks = np.random.normal(size=(self.data.num_items, self.num_features))
 
     def init_biases(self):
         """
@@ -157,9 +157,9 @@ class MF_implicit(MF):
         """
         Initializes the hyperparameters used in BSGD.
         """
-        self.gamma = 0.007
-        self.lambda_user = 0.01
-        self.lambda_item = 0.01
+        self.gamma = 0.01
+        self.lambda_user = 0.06
+        self.lambda_item = 0.04
         self.num_epochs = 5
         self.lambda_u_bias = 0.001
         self.lambda_i_bias = 0.001

@@ -63,8 +63,8 @@ class MF_SGD(MF):
         Initializes the hyperparameters used in SGD.
         """
         self.gamma = 0.025
-        self.lambda_user = 0.1
-        self.lambda_item = 0.1
+        self.lambda_user = 0.06
+        self.lambda_item = 0.04
         self.num_epochs = 20
         self.threshold = 1e-4
     
