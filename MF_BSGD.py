@@ -76,9 +76,9 @@ class MF_BSGD(MF):
         """
         Initializes the hyperparameters used in BSGD.
         """
-        self.gamma = 0.025
-        self.lambda_user = 0.1
-        self.lambda_item = 0.1
+        self.gamma = 0.02
+        self.lambda_user = 0.07
+        self.lambda_item = 0.07
         self.num_epochs = 20
         self.lambda_u_bias = 0.001
         self.lambda_i_bias = 0.001

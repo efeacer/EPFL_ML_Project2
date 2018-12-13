@@ -10,36 +10,25 @@ from data_processing import create_submission
 
 PREDICTIONS_FILENAME = 'Datasets/mixed_model.csv'
 
-OPTIMAL_WEIGHTS = {'baseline_global_mean': 0.28820931,
-                   'baseline_user_mean': -0.31216191,
-                   'baseline_item_mean': -0.16738859,
-                   'mf_sgd': -0.37163926,
-                   'mf_bsgd': 0.53760117, 
-                   'mf_als': 0.69963825,
-                   'surprise_kNN_baseline_user': 0.0310014,
-                   'surprise_kNN_baseline_item': 0.40249769,
+OPTIMAL_WEIGHTS = {'baseline_global_mean': 0.40687204452635317,
+                   'baseline_user_mean': -0.42577449917982385,
+                   'baseline_item_mean': -0.3165107607916656, 
+                   'mf_sgd': -0.1708316741679142,
+                   'mf_bsgd': 0.3462436054039932, 
+                   'mf_als': 0.7375480510708262, 
+                   'surprise_kNN_baseline_user': 0.25714575898297704,
+                   'surprise_kNN_baseline_item': 0.34780294190565625,
 #                   'surprise_SVD': None,
 #                   'surprise_SVDpp': None,
-                   'surprise_slope_one': -0.14927565,
-                   'surprise_co_clustering': 0.04481663}
+                   'surprise_slope_one': -0.1823488497149787, 
+                   'surprise_co_clustering': 0.007572666695397467}
 
 def main():
     np.random.seed(98) # to be able to reproduce the results
 
     data = Data()
 
-    models = {'baseline_global_mean': None,
-              'baseline_user_mean': None,
-              'baseline_item_mean': None,
-              'mf_sgd': None,
-              'mf_bsgd': None, 
-              'mf_als': None,
-              'surprise_kNN_baseline_user': None,
-              'surprise_kNN_baseline_item': None,
-#              'surprise_SVD': None,
-#              'surprise_SVDpp': None,
-              'surprise_slope_one': None,
-              'surprise_co_clustering': None}
+    models = {}
 
     baselines = Baselines(data=data)
 
@@ -76,13 +65,13 @@ def main():
     surprise_models = SurpriseModels(data=data)
     
     print('\nModelling using user based Surprise kNN Baseline ...')
-    models['surprise_kNN_baseline_user'] = surprise_models.kNN_baseline(k=150, 
-                                                                        sim_options={'name': 'cosine',
+    models['surprise_kNN_baseline_user'] = surprise_models.kNN_baseline(k=100, 
+                                                                        sim_options={'name': 'pearson_baseline',
                                                                                      'user_based': True})['Rating']
     print('... done')
 
     print('\nModelling using item based Surprise kNN Baseline ...')
-    models['surprise_kNN_baseline_item'] = surprise_models.kNN_baseline(k=150, 
+    models['surprise_kNN_baseline_item'] = surprise_models.kNN_baseline(k=200, 
                                                                         sim_options={'name': 'pearson_baseline',
                                                                                      'user_based': False})['Rating']
     print('... done')

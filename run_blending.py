@@ -12,18 +12,7 @@ def main():
 
     data = Data(test_purpose=True)
 
-    models = {'baseline_global_mean': None,
-        'baseline_user_mean': None,
-        'baseline_item_mean': None,
-        'mf_sgd': None,
-        'mf_bsgd': None, 
-        'mf_als': None,
-        'surprise_kNN_baseline_user': None,
-        'surprise_kNN_baseline_item': None,      
-#        'surprise_SVD': None,
-#        'surprise_SVDpp': None,
-        'surprise_slope_one': None,
-        'surprise_co_clustering': None}
+    models = {}
 
     baselines = Baselines(data=data, test_purpose=True)
     
@@ -52,15 +41,17 @@ def main():
     models['mf_als'] = mf_als.train()['Rating']
     
     surprise_models = SurpriseModels(data=data, test_purpose=True)
-    
+
     print('\nModelling using user based Surprise kNN Baseline:')
-    models['surprise_kNN_baseline_user'] = surprise_models.kNN_baseline(k=150, 
-        sim_options={'name': 'cosine', 'user_based': True})['Rating']
+    models['surprise_kNN_baseline_user'] = surprise_models.kNN_baseline(k=100, 
+                                                                        sim_options={'name': 'pearson_baseline',
+                                                                                     'user_based': True})['Rating']
 
     print('\nModelling using item based Surprise kNN Baseline:')
-    models['surprise_kNN_baseline_item'] = surprise_models.kNN_baseline(k=150, 
-        sim_options={'name': 'pearson_baseline', 'user_based': False})['Rating']
-
+    models['surprise_kNN_baseline_item'] = surprise_models.kNN_baseline(k=300, 
+                                                                        sim_options={'name': 'pearson_baseline',
+                                                                                     'user_based': False})['Rating']
+                                                                                     
     print('\nModelling using Surprise SlopeOne:')
     models['surprise_slope_one'] = surprise_models.slope_one()['Rating']
     
@@ -68,7 +59,7 @@ def main():
     #models.append(surprise_models.SVD()['Rating'])
     
     #print('\nModelling using Surprise SVD++:')
-    #models.append(surprise_models.SVDpp()['Rating'])
+    #models['surprise_SVDpp'] = surprise_models.SVDpp()['Rating']
     
     print('\nModelling using Surprise Co-Clustering:')
     models['surprise_co_clustering'] = surprise_models.co_clustering()['Rating']

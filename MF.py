@@ -24,7 +24,7 @@ class MF(ABC):
         self.num_features = 20 if num_features is None else num_features
         self.init_matrices()
         self.train_rmses = [0.0, 0.0]
-        self.threshold = 1e-4 # the change in error for which training converges
+        self.threshold = 1e-5 # the change in error for which training converges
 
     @abstractmethod
     def train(self):

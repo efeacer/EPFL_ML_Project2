@@ -47,8 +47,9 @@ class MF_implicit(MF):
                 if normalizer == 0: continue
                 for item in items:
                     implicit_feedback = self.implicit_feedbacks[int(item)]
-                    self.implicit_feedbacks[int(item)] += self.gamma * (error / normalizer * 
-                        item_vector - self.lambda_implicit * implicit_feedback)
+                    self.implicit_feedbacks[int(item)] += self.gamma * (error / normalizer * item_vector
+                                                                        - self.lambda_implicit *
+                                                                        implicit_feedback)
             self.train_rmses.append(self.compute_rmse())
             print('Iteration: {}, RMSE on training set: {}'.format(i + 1, self.train_rmses[-1]))
             if self.is_converged():
@@ -157,13 +158,13 @@ class MF_implicit(MF):
         """
         Initializes the hyperparameters used in BSGD.
         """
-        self.gamma = 0.01
-        self.lambda_user = 0.06
-        self.lambda_item = 0.04
-        self.num_epochs = 5
+        self.gamma = 0.005
+        self.lambda_user = 0.01
+        self.lambda_item = 0.01
+        self.num_epochs = 10
         self.lambda_u_bias = 0.001
         self.lambda_i_bias = 0.001
-        self.lambda_implicit = 0.001
+        self.lambda_implicit = 0.005
 
 # Testing
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+import numpy as np
 from scipy.optimize import minimize
 from loss_functions import compute_rmse
 
@@ -17,25 +18,25 @@ class Blending:
             test_ratings: Test set of ratings that will be used as 
                 the set of true values during optimization
         """
-        self.__models = models
+        self.models = models
         if weights is not None:
-            self.__weights = weights
+            self.weights = weights
         else:
-            self.__weights = {'baseline_global_mean': None,
-                              'baseline_user_mean': None,
-                              'baseline_item_mean': None,
-                              'mf_sgd': None,
-                              'mf_bsgd': None, 
-                              'mf_als': None,
-                              'surprise_kNN_baseline_user': None,
-                              'surprise_kNN_baseline_item': None,                           
-#                              'surprise_SVD': None,
-#                              'surprise_SVDpp': None,
-                              'surprise_slope_one': None,
-                              'surprise_co_clustering': None}
-            for key in self.__weights:
-                self.__weights[key] = 1.0 / len(models)
-        self.__test_ratings = test_ratings
+            self.weights = {'baseline_global_mean': None,
+                            'baseline_user_mean': None,
+                            'baseline_item_mean': None,
+                            'mf_sgd': None,
+                            'mf_bsgd': None, 
+                            'mf_als': None,
+                            'surprise_kNN_baseline_user': None,
+                            'surprise_kNN_baseline_item': None,                           
+#                            'surprise_SVD': None,
+#                            'surprise_SVDpp': None,
+                            'surprise_slope_one': None,
+                            'surprise_co_clustering': None}
+            for key in self.weights:
+                self.weights[key] = 1.0 / len(models)
+        self.test_ratings = test_ratings
 
     def optimize_weighted_average(self):
         """
@@ -43,12 +44,13 @@ class Blending:
         Returns:
             optimal_weights: The optimal weight vector
         """
-        result = minimize(fun=self.__objective_function, x0=self.__weights.values(),
+        result = minimize(fun=self.objective_function,
+                          x0=list(self.weights.values()),
                           method='SLSQP')
         print(result)
-        for i, key in enumerate(self.__weights):
-            self.__weights[key] = result.x[i]
-        return self.__weights
+        for i, key in enumerate(self.weights):
+            self.weights[key] = result.x[i]
+        return self.weights
 
     def get_weighted_average(self):
         """
@@ -57,11 +59,11 @@ class Blending:
             mixed_models: The weighted combination of prediction results of each model.
         """
         mixed_models = 0
-        for key, value in self.__models.items():
-            mixed_models += self.__weights[key] * value
+        for key, value in self.models.items():
+            mixed_models += self.weights[key] * value
         return mixed_models
 
-    def __objective_function(self, weights):
+    def objective_function(self, weights):
         """
         Objective function to be optimized. The function is indeed the Root Mean 
         Squared Error of the weighted combination of prediction results of each model.
@@ -69,7 +71,7 @@ class Blending:
             weights: A list containing the individual weights of each model
         """
         mixed_models = 0
-        for key, value in self.__models.items():
-            mixed_models += self.__weights[key] * value
-        rmse = compute_rmse(self.__test_ratings, mixed_models)
+        for i, key in enumerate(self.models):
+            mixed_models += weights[i] * self.models[key]
+        rmse = compute_rmse(self.test_ratings, mixed_models)
         return rmse
