@@ -24,6 +24,15 @@ def main():
 
     print('\nModelling using baseline_movie_mean:')
     models['baseline_item_mean'] = baselines.baseline_item_mean()['Rating']
+
+    print('\nModelling using baseline_global_median:')
+    models['baseline_global_median'] = baselines.baseline_global_median()['Rating']
+    
+    print('\nModelling using baseline_user_median:')
+    models['baseline_user_median'] = baselines.baseline_user_median()['Rating']
+
+    print('\nModelling using baseline_movie_median:')
+    models['baseline_item_median'] = baselines.baseline_item_median()['Rating']
     
     mf_sgd = MF_SGD(data=data, test_purpose=True)
 

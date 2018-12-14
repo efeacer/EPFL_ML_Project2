@@ -69,6 +69,55 @@ class Baselines:
             self.evalueate_model(predictions['Rating'], 'baseline_item_mean')
         return predictions
 
+    def baseline_global_median(self):
+        """
+        Makes predictions based on the global median of the observed
+        ratings in the training set.
+        Returns:
+            predictions: The predictions of the model on the test data
+            rmse: The Root Mean Squared Error of the global mean model
+                on the training data
+        """
+        predictions = pd.DataFrame.copy(self.data.test_df)
+        predictions['Rating'] = self.data.global_median
+        if self.test_purpose: 
+            self.evalueate_model(self.data.global_median, 'baseline_global_median')
+        return predictions
+
+    def baseline_user_median(self):
+        """
+        Makes predictions based on the user median of the observed
+        ratings in the training set. 
+        Returns:
+            predictions: The predictions of the model on the test data
+        """
+        predictions = pd.DataFrame.copy(self.data.test_df)
+        def predict_group(group):
+            for i, row in group.iterrows():
+                group.at[i,'Rating'] = self.data.user_medians[row['User'] - 1]
+            return group
+        predictions = predictions.groupby('User').apply(predict_group)
+        if self.test_purpose: 
+            self.evalueate_model(predictions['Rating'], 'baseline_user_median')
+        return predictions
+
+    def baseline_item_median(self):
+        """
+        Makes predictions based on the item median of the observed
+        ratings in the training set. 
+        Returns:
+            predictions: The predictions of the model on the test data
+        """
+        predictions = pd.DataFrame.copy(self.data.test_df)
+        def predict_group(group):
+            for i, row in group.iterrows():
+                group.at[i,'Rating'] = self.data.item_medians[row['Item'] - 1]
+            return group
+        predictions = predictions.groupby('Item').apply(predict_group)
+        if self.test_purpose: 
+            self.evalueate_model(predictions['Rating'], 'baseline_item_median')
+        return predictions
+
     def evalueate_model(self, model_ratings, model_name):
         """
         Evaluates a model on the test set by computing the Root Mean Square 
@@ -86,3 +135,6 @@ if __name__ == '__main__':
     model.baseline_global_mean()
     model.baseline_user_mean()
     model.baseline_item_mean()
+    model.baseline_global_median()
+    model.baseline_user_median()
+    model.baseline_item_median()

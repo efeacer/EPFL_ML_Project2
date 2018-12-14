@@ -2,7 +2,7 @@ import numpy as np
 import scipy.sparse as sp
 import data_processing as dp
 from collections import defaultdict
-from statistics import mean
+from statistics import mean, median
 from itertools import groupby
 from sklearn.model_selection import train_test_split
 
@@ -60,12 +60,15 @@ class Data():
         using the training data.
         """
         self.global_mean = self.train_df['Rating'].mean()
-        self.user_means = {}
-        self.item_means = {}
+        self.global_median = self.train_df['Rating'].median()
+        self.user_means, self.user_medians = {}, {}
+        self.item_means, self.item_medians = {}, {}
         for user in self.train_user_key:
             self.user_means[user] = mean(self.train_user_key[user].values())
+            self.user_medians[user] = median(self.train_user_key[user].values())
         for item in self.train_item_key:
             self.item_means[item] = mean(self.train_item_key[item].values())
+            self.item_medians[item] = median(self.train_item_key[item].values())
 
     def get_observed_entries(self, matrix: sp.lil_matrix):
         """

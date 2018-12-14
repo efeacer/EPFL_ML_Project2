@@ -13,6 +13,9 @@ PREDICTIONS_FILENAME = 'Datasets/mixed_model.csv'
 OPTIMAL_WEIGHTS = {'baseline_global_mean': 0.40687204452635317,
                    'baseline_user_mean': -0.42577449917982385,
                    'baseline_item_mean': -0.3165107607916656, 
+#                   'baseline_global_median': None,
+#                   'baseline_user_median': None,
+#                   'baseline_item_median': None,
                    'mf_sgd': -0.1708316741679142,
                    'mf_bsgd': 0.3462436054039932, 
                    'mf_als': 0.7375480510708262, 
@@ -42,6 +45,18 @@ def main():
 
     print('\nModelling using baseline_movie_mean ...')
     models['baseline_item_mean'] = baselines.baseline_item_mean()['Rating']
+    print('... done')
+
+    print('\nModelling using baseline_global_median ...')
+    models['baseline_global_median'] = baselines.baseline_global_median()['Rating']
+    print('... done')
+
+    print('\nModelling using baseline_user_median ...')
+    models['baseline_user_median'] = baselines.baseline_user_median()['Rating']
+    print('... done')
+
+    print('\nModelling using baseline_movie_median ...')
+    models['baseline_item_median'] = baselines.baseline_item_median()['Rating']
     print('... done')
     
     mf_sgd = MF_SGD(data=data)

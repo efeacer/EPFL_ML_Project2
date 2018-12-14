@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as numpy
 from data import Data
 from statistics import mean
 from collections import defaultdict
