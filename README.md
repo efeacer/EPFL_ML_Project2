@@ -2,8 +2,8 @@
 
 ## Machine Learning Algorithms for Recommender Systems
 
-The second project of the EPFL Machine Learning course, which aims to construct a recommender 
-system with good predictive performance using various Machine Learning Algorithms. The given
+The second project of the EPFL Machine Learning course, which aims to construct a Recommender 
+System with good predictive performance using various Machine Learning Algorithms. The given
 report explains our machine learning procedure in detail together with the well documented python 
 code in the scripts folder. 
 
