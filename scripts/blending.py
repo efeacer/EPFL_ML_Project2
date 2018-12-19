@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.optimize import minimize
-from loss_functions import compute_rmse
+from helpers.loss_functions import compute_rmse
 
 class Blending:
     """
@@ -25,16 +25,11 @@ class Blending:
             self.weights = {'baseline_global_mean': None,
                             'baseline_user_mean': None,
                             'baseline_item_mean': None,
-                            'baseline_global_median': None,
-                            'baseline_user_median': None,
-                            'baseline_item_median': None,
                             'mf_sgd': None,
                             'mf_bsgd': None, 
                             'mf_als': None,
-                            'surprise_kNN_baseline_user': None,
-                            'surprise_kNN_baseline_item': None,                           
-#                            'surprise_SVD': None,
-#                            'surprise_SVDpp': None,
+                            'surprise_kNN_means_user': None,
+                            'surprise_kNN_means_item': None,     
                             'surprise_slope_one': None,
                             'surprise_co_clustering': None}
             for key in self.weights:
