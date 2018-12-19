@@ -22,7 +22,6 @@ code in the scripts folder.
 - `report.pdf`: project report explaining our machine learning procedure in .pdf format
 - `project2_description.pdf`: assignment description given by EPFL
 
-
 ## Contact us
 
 Please don't hesitate to contact the authors about any questions about the project or 
