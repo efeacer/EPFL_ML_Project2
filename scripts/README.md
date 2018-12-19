@@ -7,7 +7,7 @@
 	
 2) Make sure that  you have the required libraries:
 * Default libraries
-  + os
+  + abc
   + collections
   + cython
 * Libraries installed via `pip`
@@ -15,6 +15,7 @@
   + SciPy
   + Pandas
   + scikit-learn
+  + matplotlib
 * Open source libraries with specific installation
   + Surprise Library
     + Can be founde [in this GitHub repository](https://github.com/NicolasHug/Surprise). 
