@@ -45,6 +45,7 @@ located inside the `datasets` folder. (The procedure takes around half an hour i
 - *datasets* :  contains the trainining and test sets.
     - *data_train.csv* : training set
     - *sample_submission.csv* : test set provided by CrowdAI
+    - *final_submission.csv* : our final submission to CrowdAI
 - *data_related*: contains useful codes to process and analyze raw data
     - *data.py*
     - *data_processing.py*
