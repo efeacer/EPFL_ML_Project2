@@ -1,6 +1,6 @@
 ## Group: THREE COMMA CLUB (Efe Acer, Murat Topak, Daniil Dmitriev)
 
-### Steps to reproduce our result on the CrowdAI platform:
+### Steps to reproduce our result on the crowdAI platform:
 	
 1) Make sure the raw datasets `data_train.csv` and `sample_submission.csv` are inside the 
 	`datasets` folder located here in the `scripts` folder.
