@@ -1,6 +1,6 @@
 ## Group: THREE COMMA CLUB (Efe Acer, Murat Topak, Daniil Dmitriev)
 
-### Steps to reproduce our result on the crowdAI platform:
+### Steps to reproduce our result on the crowdAI platform: (submission ID: 24793)
 	
 1) Make sure the raw datasets `data_train.csv` and `sample_submission.csv` are inside the 
 	`datasets` folder located here in the `scripts` folder.
@@ -37,7 +37,7 @@
     by following the previous instruction for `run_blending.py` or `run_blending.ipynb`.
     
 4) The predictions of the final model will be created in a file named `final_submission.csv`,
-located inside the `datasets` folder. (The procedure takes around half an hour in total.)
+located inside the `datasets` folder. (The procedure takes around an hour in total.)
 
 (`python --version` -> `Python 3.6.5 :: Anaconda, Inc.`)
 
